@@ -1,0 +1,4 @@
+Django==4.2           # Replace with the latest version if needed
+djangorestframework==3.14.0  # For REST API support, optional but useful
+psycopg2-binary==2.9.7  # Required if using PostgreSQL as the database
+Pillow==10.0.0         # For handling image files, optional based on needs
