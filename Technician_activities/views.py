@@ -80,15 +80,15 @@ def start_recording(request, ticket_id):
     
     # Render the template showing recording in progress
     return render(request, 'technician_activities/recording_in_progress.html', {'ticket_id': ticket_id})
+@csrf_exempt
 def stop_recording(request, ticket_id):
     global is_recording
-    if not is_recording:
-        message = "No recording is in progress for this ticket."
-    else:
+    if request.method == 'POST':
+        if not is_recording:
+            return JsonResponse({'status': 'No recording is in progress', 'ticket_id': ticket_id})
         is_recording = False
-        message = "Recording has been stopped successfully."
-
-    return render(request, 'technician_activities/stop_recording.html', {'message': message})
+        return JsonResponse({'status': 'Recording stopped successfully', 'ticket_id': ticket_id})
+    return JsonResponse({'status': 'Invalid request method'}, status=405)
     # return JsonResponse({'status': 'Invalid request method'}, status=405)
 # Download report as CSV
 def download_report(request, ticket_id):

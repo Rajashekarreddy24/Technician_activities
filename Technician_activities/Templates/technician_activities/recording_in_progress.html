@@ -1,9 +1,10 @@
+<!-- templates/technician_activities/recording_in_progress.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Screen Recording</title>
+    <title>Recording in Progress</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,11 +45,11 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.status === 'Recording stopped') {
+                if (data.status === 'Recording stopped successfully') {
                     alert('Recording has been stopped.');
-                    window.location.href = '/';  // Redirect to dashboard or any other page
+                    window.location.href = '/';  // Redirect to dashboard or another page as needed
                 } else {
-                    alert('Failed to stop recording.');
+                    alert(data.status || 'Failed to stop recording.');
                 }
             })
             .catch(error => console.error('Error:', error));

@@ -29,7 +29,7 @@
                             <td>{{ ticket.category }}</td>
                             <td>
                                 <a href="{% url 'start_recording' ticket.ticket_id %}" class="btn btn-primary">Start Recording</a>
-                                <a href="{% url 'stop_recording' ticket.ticket_id %}" class="btn btn-danger">Stop Recording</a>
+                                <button class="btn btn-danger" onclick="stopRecording('{{ ticket.ticket_id }}')">Stop Recording</button>
                                 <a href="{% url 'download_report' ticket.ticket_id %}" class="btn btn-success">Download Report</a>
                             </td>
                         </tr>
@@ -42,5 +42,25 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function stopRecording(ticketId) {
+            fetch(`/stop_recording/${ticketId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'Recording stopped successfully') {
+                    alert('Recording has been stopped.');
+                } else {
+                    alert(data.status);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
 </body>
 </html>
