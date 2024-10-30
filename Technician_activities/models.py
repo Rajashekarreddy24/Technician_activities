@@ -24,6 +24,24 @@ class Activity(models.Model):
     category = models.CharField(max_length=100, blank=True, null=True)
     automated_flag = models.BooleanField(default=False)
 
+    
+    @staticmethod
+    def get_activity_report(ticket_id, start_date, end_date):
+        return Activity.objects.filter(
+            ticket__ticket_id=ticket_id,
+            timestamp__range=(start_date, end_date)
+        ).order_by('-timestamp')
+
+    @staticmethod
+    def get_time_analysis(ticket_id):
+        data = Activity.objects.filter(ticket__ticket_id=ticket_id).aggregate(
+            total_time=models.Sum('duration'),
+            avg_duration=models.Avg('duration'),
+            activity_count=models.Count('id')
+        )
+        return data
+
+
 class Prompt(models.Model):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -39,3 +57,4 @@ class VideoRecording(models.Model):
     filesize = models.BigIntegerField()
     resolution = models.CharField(max_length=50)
     fps = models.IntegerField()
+

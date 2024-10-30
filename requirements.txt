@@ -1,7 +1,3 @@
-Django==4.2           # Replace with the latest version if needed
-djangorestframework==3.14.0  # For REST API support, optional but useful
-psycopg2-binary==2.9.7  # Required if using PostgreSQL as the database
-Pillow==10.0.0         # For handling image files, optional based on needs
 asgiref==3.8.1
 certifi==2024.8.30
 chardet==5.2.0
@@ -16,9 +12,11 @@ packaging==24.1
 pandas==2.2.3
 Pillow==10.0.0
 plotly==5.24.1
-psycopg2-binary==2.9.7
+psutil==6.1.0
+psycopg2==2.9.7
 python-dateutil==2.9.0.post0
 pytz==2024.2
+pywin32==308
 reportlab==4.2.5
 requests==2.32.3
 six==1.16.0

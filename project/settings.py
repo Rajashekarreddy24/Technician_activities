@@ -133,3 +133,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 TICKET_SYSTEM_API_URL = 'https://staging.connectwisedev.com' 
 TICKET_SYSTEM_API_KEY = 'eGFtcGxpZnlfYytGM1NsV2hFNUhJaUNZSThUOmlFMWo4NExGRW9RV1pWZ2I='  
 
+INACTIVITY_THRESHOLD = 300  
+
+
+# In settings.py
+TECHNICIAN_ASSISTANT_CONFIG = {
+    'TicketSystemAPI': 'http://your-ticket-system-api.com',
+    'APIKey': 'your-api-key',
+    'InactivityThreshold': 300,
+    'AutoPromptInterval': 1800,
+    'DataExportPath': 'exports/'
+}

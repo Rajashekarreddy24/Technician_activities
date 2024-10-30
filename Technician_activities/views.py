@@ -1,4 +1,3 @@
-
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from .models import Ticket, Activity, VideoRecording, Prompt
@@ -20,7 +19,16 @@ from django.shortcuts import render, get_object_or_404
 from .models import Ticket, Activity
 from .services import TicketSystemIntegration
 from django.http import JsonResponse
-
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse, HttpResponse
+from .models import Ticket, Activity
+from .utils import generate_activity_dataframe, export_to_csv
+from datetime import datetime
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from django.http import JsonResponse
+from .monitoring import ActivityMonitor
 
 
 def dashboard(request):
@@ -65,11 +73,11 @@ def record_screen(ticket_id):
     
     # Set up screen capture
     with mss.mss() as sct:
-        monitor = sct.monitors[1]  # Using the first monitor
+        monitor = sct.monitors[1]  
         width = monitor['width']
         height = monitor['height']
         
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         out = cv2.VideoWriter(filename, fourcc, 20.0, (width, height))
         
         while is_recording:
@@ -134,9 +142,7 @@ def download_report(request, ticket_id):
 
     return response
 
-from django.http import HttpResponse
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+
 
 def download_report_pdf(request, ticket_id):
     ticket = get_object_or_404(Ticket, ticket_id=ticket_id)
@@ -169,5 +175,45 @@ def download_report_pdf(request, ticket_id):
 
 
 
+# Dictionary to keep track of active monitors by ticket ID
+active_monitors = {}
 
+def start_monitoring(request, ticket_id):
+    if ticket_id not in active_monitors:
+        monitor = ActivityMonitor(ticket_id)
+        monitor.start_monitoring()
+        active_monitors[ticket_id] = monitor
+        return JsonResponse({'status': 'Monitoring started for ticket {}'.format(ticket_id)})
+    else:
+        return JsonResponse({'status': 'Monitoring already active for ticket {}'.format(ticket_id)})
+
+def stop_monitoring(request, ticket_id):
+    monitor = active_monitors.get(ticket_id)
+    if monitor:
+        monitor.stop_monitoring()
+        del active_monitors[ticket_id]
+        return JsonResponse({'status': 'Monitoring stopped for ticket {}'.format(ticket_id)})
+    else:
+        return JsonResponse({'status': 'No active monitor found for ticket {}'.format(ticket_id)})
+
+
+
+
+def generate_activity_report(request, ticket_id):
+    ticket = get_object_or_404(Ticket, ticket_id=ticket_id)
+    start_date = request.GET.get('start_date', '2023-01-01')
+    end_date = request.GET.get('end_date', datetime.now().strftime('%Y-%m-%d'))
+    
+    activities = Activity.get_activity_report(ticket_id, start_date, end_date)
+    df = generate_activity_dataframe(activities)
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = f'attachment; filename="activity_report_{ticket_id}.csv"'
+    df.to_csv(response, index=False)
+    
+    return response
+
+def generate_time_analysis(request, ticket_id):
+    analysis = Activity.get_time_analysis(ticket_id)
+    return JsonResponse(analysis)
 
