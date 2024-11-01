@@ -58,3 +58,27 @@ class VideoRecording(models.Model):
     resolution = models.CharField(max_length=50)
     fps = models.IntegerField()
 
+class TicketInfo(models.Model):
+    ticket_id = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='ticket_infos', to_field='ticket_id')
+    category = models.CharField(max_length=50)
+    description = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    priority = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"Info for Ticket {self.ticket.ticket_id}"
+
+class Action(models.Model):
+    action_type = models.CharField(max_length=50)
+    target = models.CharField(max_length=100)
+    parameters = models.JSONField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+    screen_location = models.JSONField()  # Store as dict for (x, y) coordinates
+
+
+class Pattern(models.Model):
+    category = models.CharField(max_length=100)
+    pattern = models.TextField()
+
+    def __str__(self):
+        return f"{self.category}: {self.pattern}"

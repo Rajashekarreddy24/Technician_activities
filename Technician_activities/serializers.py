@@ -17,3 +17,26 @@ class PromptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prompt
         fields = '__all__'
+
+
+
+from rest_framework import serializers
+from .models import TicketInfo, Action
+
+class TicketInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TicketInfo
+        fields = '__all__'
+
+class ActionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Action
+        fields = '__all__'
+
+from rest_framework import serializers
+from .models import Pattern
+
+class PatternSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pattern
+        fields = '__all__'
